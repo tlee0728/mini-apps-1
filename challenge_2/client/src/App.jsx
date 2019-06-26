@@ -6,7 +6,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       input: '',
-      csv: []
+      csv: ''
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -14,17 +14,28 @@ class App extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    axios
-      .post('/api', {input: this.state.input})
-      .then( (data) => {
-        console.log(data.data);
-        this.setState({
-          csv: data.data
-        })
+
+    const fileToLoad = document.getElementById("fileToLoad").files[0];
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      console.log("reading file", event.target.result)
+      this.setState({
+        csv: event.target.result
       })
-      .catch( (err) => {
-        console.error('error submitting', err);
-      })
+    }
+
+    reader.readAsText(fileToLoad, "UTF-8");
+
+    // axios
+    //   .post('/api', {input: this.state.input})
+    //   .then( (data) => {
+    //     this.setState({
+    //       csv: data.data
+    //     })
+    //   })
+    //   .catch( (err) => {
+    //     console.error('error submitting', err);
+    //   })
   }
 
   handleChange(e) {
@@ -40,7 +51,8 @@ class App extends React.Component {
       <div>
         <div>
           <form onSubmit={this.handleSubmit}>
-            <textarea onChange={this.handleChange} id="textarea" type="textarea"></textarea>
+            {/* <textarea onChange={this.handleChange} id="textarea" type="textarea"></textarea> */}
+            <input type="file" id="fileToLoad"/>
             <button>Submit</button>
           </form>
         </div>
